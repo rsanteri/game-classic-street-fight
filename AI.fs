@@ -38,8 +38,7 @@ let OperateNPC (entityController: EntityController) (entities: Entity list) (fra
     | MoveTo (x, y) ->
         let radians = atan2 (float (x - entity.position.x)) (float (entity.position.y - y))
         let degrees = (radians + 6.2831853071795865) * 57.2957795130823209;
-        Debug.Print (string (cos degrees))
-        Debug.Print (string (float entity.velocitySpeed * cos degrees))
+        
         entity.velocity.x <- AddVelocity entity.velocity.x  (int (float entity.velocitySpeed *  cos degrees))
         entity.velocity.y <- AddVelocity entity.velocity.y (int (float entity.velocitySpeed * sin degrees))
     | MoveNextTo ent ->
