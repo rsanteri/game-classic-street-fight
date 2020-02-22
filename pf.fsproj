@@ -13,6 +13,8 @@
   <ItemGroup>
     <Compile Include="Entity.fs" />
     <Compile Include="EntityMovement.fs" />
+    <Compile Include="EntityActions.fs" />
+    <Compile Include="Player.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

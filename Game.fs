@@ -8,6 +8,8 @@ open System.Diagnostics
 
 open Entity
 open EntityMovement
+open EntityActions
+open Player
 
 type Game1() as self =
     inherit Game()
@@ -19,7 +21,7 @@ type Game1() as self =
 
     let player = DefaultHumanoid { x = 100; y = 500 }
 
-    let npcs =
+    let mutable npcs =
         [ DefaultHumanoid { x = 300; y = 500 }; DefaultHumanoid { x = 350; y = 525 } ]
 
 
@@ -42,32 +44,27 @@ type Game1() as self =
         //
 
         let keyboard = Keyboard.GetState()
-
-        if keyboard.IsKeyDown(Keys.W) || keyboard.IsKeyDown(Keys.S) then
-            let dir =
-                if keyboard.IsKeyDown(Keys.W) then -player.velocitySpeed else player.velocitySpeed
-            player.velocity.y <- AddVelocity player.velocity.y dir
-        else
-            player.velocity.y <- NaturalSlowVelocity player.velocity.y
-
-        if keyboard.IsKeyDown(Keys.A) || keyboard.IsKeyDown(Keys.D) then
-            let dir =
-                if keyboard.IsKeyDown(Keys.A) then -player.velocitySpeed else player.velocitySpeed
-            player.velocity.x <- AddVelocity player.velocity.x dir
-        else
-            player.velocity.x <- NaturalSlowVelocity player.velocity.x
+        // Update player velocity according input
+        HandlePlayerMovementInput keyboard player
+        // Update action
+        if player.action = NoOp && keyboard.IsKeyDown(Keys.Space) then
+            player.action <- Hit
 
         //
-        // Update State
+        // Update Movement & Action State
         //
         
         MoveEntity player npcs
+        HandleEntityAction player npcs
 
         let allEntities = List.append npcs [player]
-
         for npc in npcs do
             MoveEntity npc allEntities
-
+            HandleEntityAction npc allEntities
+        
+        /// Clean up the dead
+        npcs <- List.filter (fun npc -> npc.properties.health > 0) npcs
+            
 
     override self.Draw(gameTime) =
         do self.GraphicsDevice.Clear Color.DarkSlateBlue
