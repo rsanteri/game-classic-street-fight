@@ -13,6 +13,7 @@ open EntityActions
 open Player
 open AI
 open AITypes
+open InputHelper
 
 type Game1() as self =
     inherit Game()
@@ -21,6 +22,11 @@ type Game1() as self =
     let graphics = new GraphicsDeviceManager(self)
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
     let mutable randomTexture = Unchecked.defaultof<Texture2D>
+    let mutable cursor = { x = 0; y = 0 }
+
+    let mutable io = 
+        { keys = Unchecked.defaultof<KeyboardState>
+          mouse = Unchecked.defaultof<MouseState> }
 
     let player = DefaultHumanoid { x = 100; y = 500 }
 
@@ -28,7 +34,7 @@ type Game1() as self =
         [ DefaultHumanoid { x = 300; y = 500 }; DefaultHumanoid { x = 350; y = 525 } ]
 
     let mutable brains: EntityController list =
-        List.map (fun npc -> { brain = { decision = Slack; nextDecision = 1000 }; entity = npc }) npcs
+        List.map (fun npc -> { brain = { decision = MoveNextTo player; nextDecision = 1000 }; entity = npc }) npcs
 
     override self.Initialize() =
         do spriteBatch <- new SpriteBatch(self.GraphicsDevice)
@@ -41,12 +47,18 @@ type Game1() as self =
     override self.LoadContent() = randomTexture <- self.Content.Load<Texture2D>("floor")
 
     override self.Update(gameTime) =
-        Debug.Print "Update"
+        let keyboard = Keyboard.GetState()
+        let mouse = Mouse.GetState()
+
+        cursor <- { x = mouse.X; y=mouse.Y }
+
+        /// Helper to find input actions
+        let ioactions = makeIOActionState io { keys = keyboard; mouse = mouse }
+
         ///
         /// Handle input
-        ///
+        /// 
 
-        let keyboard = Keyboard.GetState()
         /// Update player velocity according input
         HandlePlayerMovementInput keyboard player
         /// Update action
@@ -56,9 +68,14 @@ type Game1() as self =
         ///
         /// Make ai decisions
         /// 
+        /// 
         let allEntities = List.append [player] npcs
         for brain in brains do
             OperateNPC brain allEntities gameTime.ElapsedGameTime.Milliseconds
+
+        if ioactions.leftClicked then
+            for controller in brains do
+                controller.brain.decision <- MoveTo (mouse.X, mouse.Y)
 
         ///
         /// Update Movement & Action State
@@ -71,6 +88,9 @@ type Game1() as self =
         
         /// Clean up the dead
         npcs <- List.filter (fun npc -> npc.properties.health > 0) npcs
+
+        /// Save io state for next frame
+        io <- { keys = keyboard; mouse = mouse }
             
 
     override self.Draw(gameTime) =
@@ -84,5 +104,7 @@ type Game1() as self =
         // Player
         for entity in entities do
             DrawEntity spriteBatch entity randomTexture
+
+        spriteBatch.Draw(randomTexture, Rectangle(cursor.x, cursor.y, 5, 5), Color.Red)
 
         spriteBatch.End()
