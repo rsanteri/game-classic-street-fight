@@ -1,5 +1,6 @@
 module EntityActions
 
+open EntityTypes
 open Entity
 open EntityMovement
 
@@ -43,12 +44,20 @@ let HitRecoveryAction entity =
     hand.position <- CalculatePosition hand.velocity hand.position 10
 
 ///
+/// Passive body part recovery for situations where bodyparts are not where they should be for some reason.
+/// 
+let BodyPartRecovery entity =
+    let hand = entity.body.hand
+    if hand.position.x <> hand.basePosition.x then
+        HitRecoveryAction entity
+
+///
 /// Handle frame update for action if one exists
 /// 
 let HandleEntityAction entity entities =
     match entity.action with
-    | NoOp -> ignore 0
+    | NoOp -> 
+        BodyPartRecovery entity
     | Hit ->
-        let entitiesWithoutSelf = List.filter (fun item -> item.id <> entity.id) entities
-        HitAction entity entitiesWithoutSelf
+        HitAction entity entities
     | HitRecovery -> HitRecoveryAction entity

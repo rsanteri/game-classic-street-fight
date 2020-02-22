@@ -1,7 +1,7 @@
 module Player
 
 open Microsoft.Xna.Framework.Input
-open Entity
+open EntityTypes
 open EntityMovement
 
 ///
@@ -23,5 +23,7 @@ let HandlePlayerMovementInput (keyboard: KeyboardState) player =
         player.velocity.x <- AddVelocity player.velocity.x dir
         // Update player facing
         player.facing <- if dir < 0 then Left else Right
+        // Flip position of hand according the facing
+        player.body.hand.basePosition.x <- if dir < 0 then 10 else 30
     else
         player.velocity.x <- NaturalSlowVelocity player.velocity.x

@@ -11,10 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="EntityTypes.fs" />
+    <Compile Include="AITypes.fs" />
     <Compile Include="Entity.fs" />
     <Compile Include="EntityMovement.fs" />
     <Compile Include="EntityActions.fs" />
     <Compile Include="Player.fs" />
+    <Compile Include="AI.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

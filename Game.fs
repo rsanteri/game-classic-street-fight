@@ -7,9 +7,12 @@ open System
 open System.Diagnostics
 
 open Entity
+open EntityTypes
 open EntityMovement
 open EntityActions
 open Player
+open AI
+open AITypes
 
 type Game1() as self =
     inherit Game()
@@ -24,6 +27,8 @@ type Game1() as self =
     let mutable npcs =
         [ DefaultHumanoid { x = 300; y = 500 }; DefaultHumanoid { x = 350; y = 525 } ]
 
+    let mutable brains: EntityController list =
+        List.map (fun npc -> { brain = { decision = Slack; nextDecision = 1000 }; entity = npc }) npcs
 
     override self.Initialize() =
         do spriteBatch <- new SpriteBatch(self.GraphicsDevice)
@@ -31,36 +36,38 @@ type Game1() as self =
         graphics.PreferredBackBufferHeight <- 768
         graphics.ApplyChanges()
         do base.Initialize()
-        // TODO: Add your initialization logic here
-
         ()
 
     override self.LoadContent() = randomTexture <- self.Content.Load<Texture2D>("floor")
 
     override self.Update(gameTime) =
-
-        //
-        // Handle input
-        //
+        Debug.Print "Update"
+        ///
+        /// Handle input
+        ///
 
         let keyboard = Keyboard.GetState()
-        // Update player velocity according input
+        /// Update player velocity according input
         HandlePlayerMovementInput keyboard player
-        // Update action
+        /// Update action
         if player.action = NoOp && keyboard.IsKeyDown(Keys.Space) then
             player.action <- Hit
 
-        //
-        // Update Movement & Action State
-        //
-        
-        MoveEntity player npcs
-        HandleEntityAction player npcs
+        ///
+        /// Make ai decisions
+        /// 
+        let allEntities = List.append [player] npcs
+        for brain in brains do
+            OperateNPC brain allEntities gameTime.ElapsedGameTime.Milliseconds
 
-        let allEntities = List.append npcs [player]
-        for npc in npcs do
-            MoveEntity npc allEntities
-            HandleEntityAction npc allEntities
+        ///
+        /// Update Movement & Action State
+        ///
+
+        for entity in allEntities do
+            let otherEntities = List.filter (fun item -> item.id <> entity.id) allEntities
+            MoveEntity entity otherEntities
+            HandleEntityAction entity otherEntities
         
         /// Clean up the dead
         npcs <- List.filter (fun npc -> npc.properties.health > 0) npcs

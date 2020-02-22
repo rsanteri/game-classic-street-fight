@@ -1,6 +1,6 @@
 module EntityMovement
 
-open Entity
+open EntityTypes
 open System.Diagnostics
 
 ///

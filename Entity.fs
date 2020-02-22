@@ -3,68 +3,8 @@ module Entity
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 
-type EntityPosition =
-    { mutable x: int
-      mutable y: int }
-
-type EntityVelocity =
-    { mutable x: int
-      mutable y: int }
-
-type Size =
-    { width: int
-      height: int }
-
-type EntitySize =
-    { original: Size // Hitbox size
-      sprite: Size } // Sprite size
-
-type EntityProperties =
-    { mutable health: int }
-
-type EntityBodyPart =
-    { mutable position: EntityPosition
-      basePosition: EntityPosition
-      velocity: EntityVelocity
-      distance: int
-      size: Size }
-
-type EntityBodyParts =
-    { hand: EntityBodyPart }
-
-type EntityAction =
-    | NoOp
-    | Hit
-    | HitRecovery
-
-type Facing = 
-    | Left
-    | Right
-
-type Entity =
-    { id: int
-      mutable position: EntityPosition
-      // Original (hitbox) size and sprite size.
-      size: EntitySize
-      // Value between -100 and 100 for x and y axis to get movement speed
-      velocity: EntityVelocity
-      // Speed how fast velocity accumulates. for example
-      // - velocitySpeed = 10 would take 10 frames to reach maximum speed. 
-      // - velocitySpeed = 100 would take 1 frames to reach maximum speed. 
-      velocitySpeed: int
-      // Maximum speed`
-      speed: int
-      // Game attributes
-      properties: EntityProperties
-      // How should i do this?
-      body: EntityBodyParts
-      mutable facing : Facing
-      // Active action. Only one at a time.
-      mutable action: EntityAction }
-
-type RenderableEntity =
-    | PlayerEntity of Entity
-    | NPCEntity of Entity
+open AITypes
+open EntityTypes
 
 let mutable entityIndex = 0
 
@@ -102,9 +42,11 @@ let DefaultHumanoid(pos: EntityPosition): Entity =
                     { x = 25
                       y = 0 } }
       facing = Right
-      action = NoOp }
+      action = NoOp}
 
-
+///
+/// Order entities by position.y so those that are more down are rendered ON the entities more up
+/// 
 let OrderEntities (entitylist: Entity list) (player: Entity) =
     entitylist
     |> List.map NPCEntity
@@ -122,6 +64,10 @@ let OrderEntities (entitylist: Entity list) (player: Entity) =
 
         ae.position.y - be.position.y)
 
+///
+/// Right now hitbox should always be bottom part of entity so if sprite is bigger than hitbox, we need 
+/// to move it up
+/// 
 let GetSpritePosition(entity: Entity) =
     if entity.size.original = entity.size.sprite then
         entity.position
@@ -129,7 +75,9 @@ let GetSpritePosition(entity: Entity) =
         { x = entity.position.x + (entity.size.original.width - entity.size.sprite.width)
           y = entity.position.y + (entity.size.original.height - entity.size.sprite.height) }
 
-
+///
+/// Body part position is relative to its parent entity so realy position is entity.position + part.position 
+/// 
 let BodyPartPosition (entity: Entity) (part: EntityBodyPart): EntityPosition =
     { x = entity.position.x + part.position.x
       y = entity.position.y + part.position.y }
