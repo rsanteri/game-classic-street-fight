@@ -32,12 +32,19 @@ type EntityBodyPart =
       size: Size }
 
 type EntityBodyParts =
-    { hand: EntityBodyPart }
+    { hand: EntityBodyPart
+      lleg: EntityBodyPart
+      rleg: EntityBodyPart }
 
 type EntityAction =
     | NoOp
     | Hit
     | HitRecovery
+
+type EntityWalking =
+    | NotWalking
+    | LeftLegUp
+    | RightLegUp
 
 type Facing = 
     | Left
@@ -60,6 +67,7 @@ type Entity =
       properties: EntityProperties
       /// How should i do this?
       body: EntityBodyParts
+      mutable walking : EntityWalking
       /// Which way entity is facing?
       mutable facing : Facing
       /// Active action. Only one at a time.

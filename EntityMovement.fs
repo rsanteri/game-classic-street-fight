@@ -119,4 +119,3 @@ let MoveEntity (entity: Entity) (entities: Entity list) =
                 then collision.position.x + collision.size.original.width
                 else collision.position.x - collision.size.original.width
             entity.velocity.x <- 0
-

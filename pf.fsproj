@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="ResourceManager.fs" />
     <Compile Include="InputHelper.fs" />
     <Compile Include="EntityTypes.fs" />
     <Compile Include="AITypes.fs" />
