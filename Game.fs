@@ -28,6 +28,7 @@ type Game1() as self =
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
     let mutable cursor = { x = 0; y = 0 }
     let mutable gamestate = Playing
+    let mutable stageCamera: Camera.XCamera = { x = 0 }
 
     let mutable io = 
         { keys = Unchecked.defaultof<KeyboardState>
@@ -84,8 +85,8 @@ type Game1() as self =
             /// 
             /// 
             let allEntities = List.append [player] npcs
-            for brain in brains do
-                OperateNPC brain allEntities gameTime.ElapsedGameTime.Milliseconds
+            // for brain in brains do
+                // OperateNPC brain allEntities gameTime.ElapsedGameTime.Milliseconds
 
             if ioactions.leftClicked then
                 for controller in brains do
@@ -114,6 +115,11 @@ type Game1() as self =
             if ioactions.pressed Keys.Escape then
                 gamestate <- Playing
 
+        /// Move camera after everything
+        Camera.MoveCamera stageCamera player.position.x
+
+        Debug.Print (string stageCamera.x)
+
         /// Save io state for next frame
         io <- { keys = keyboard; mouse = mouse }
             
@@ -122,15 +128,16 @@ type Game1() as self =
         do self.GraphicsDevice.Clear Color.DarkSlateBlue
 
         let entities = OrderEntities npcs player
+        let cameraPosition = Camera.ToCameraPosition stageCamera
 
         spriteBatch.Begin()
         // BG
-        spriteBatch.Draw(ResourceManager.getSprite "default", Rectangle(0, 418, 1024, 350), Color.DarkGray)
+        spriteBatch.Draw(ResourceManager.getSprite "default", cameraPosition (Rectangle(0, 418, 1024, 350)), Color.DarkGray)
         // Entities
         for entity in entities do
-            DrawEntity spriteBatch entity
+            DrawEntity spriteBatch entity cameraPosition
         // Cursor. Probably not needed in real game
-        spriteBatch.Draw(ResourceManager.getSprite "default", Rectangle(cursor.x, cursor.y, 5, 5), Color.Red)
+        spriteBatch.Draw(ResourceManager.getSprite "default", cameraPosition (Rectangle(cursor.x, cursor.y, 5, 5)), Color.Red)
         // Render message about pause or menu state
         match gamestate with
         | Paused ->

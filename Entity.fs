@@ -94,7 +94,7 @@ let BodyPartPosition (entity: Entity) (part: EntityBodyPart): EntityPosition =
 ///
 /// Draw entity
 ///
-let DrawEntity (spriteBatch: SpriteBatch) (entity: RenderableEntity) =
+let DrawEntity (spriteBatch: SpriteBatch) (entity: RenderableEntity) (toCameraPos: Rectangle -> Rectangle) =
     let (isPlayer, entityProps) =
         match entity with
         | PlayerEntity ent -> (true, ent)
@@ -106,21 +106,21 @@ let DrawEntity (spriteBatch: SpriteBatch) (entity: RenderableEntity) =
 
     spriteBatch.Draw
         (defaultSprite,
-         Rectangle(sritePosition.x, sritePosition.y, entityProps.size.sprite.width, entityProps.size.sprite.height),
+         toCameraPos (Rectangle(sritePosition.x, sritePosition.y, entityProps.size.sprite.width, entityProps.size.sprite.height)),
          (if isPlayer then Color.White else Color.Red))
 
     // Draw hitbox
     spriteBatch.Draw
         (defaultSprite,
-         Rectangle
+         toCameraPos (Rectangle
              (entityProps.position.x, entityProps.position.y, entityProps.size.original.width,
-              entityProps.size.original.height), Color.LightBlue * 0.5f)
+              entityProps.size.original.height)), Color.LightBlue * 0.5f)
 
     // Draw body parts
     let handPos = BodyPartPosition entityProps entityProps.body.hand
     spriteBatch.Draw
         (defaultSprite,
-         Rectangle(handPos.x, handPos.y, entityProps.body.hand.size.width, entityProps.body.hand.size.height),
+         toCameraPos (Rectangle(handPos.x, handPos.y, entityProps.body.hand.size.width, entityProps.body.hand.size.height)),
          Color.DarkBlue)
 
     let llegPos = BodyPartPosition entityProps entityProps.body.lleg
@@ -128,15 +128,15 @@ let DrawEntity (spriteBatch: SpriteBatch) (entity: RenderableEntity) =
 
     spriteBatch.Draw
         (defaultSprite,
-         Rectangle(llegPos.x, llegPos.y, entityProps.body.lleg.size.width, entityProps.body.lleg.size.height),
+         toCameraPos (Rectangle(llegPos.x, llegPos.y, entityProps.body.lleg.size.width, entityProps.body.lleg.size.height)),
          Color.SandyBrown)
 
     spriteBatch.Draw
         (defaultSprite,
-         Rectangle(rlegPos.x, rlegPos.y, entityProps.body.rleg.size.width, entityProps.body.rleg.size.height),
+         toCameraPos (Rectangle(rlegPos.x, rlegPos.y, entityProps.body.rleg.size.width, entityProps.body.rleg.size.height)),
          Color.SandyBrown)
 
     // Draw health
     for i in 0 .. entityProps.properties.health do
         spriteBatch.Draw
-            (defaultSprite, Rectangle(entityProps.position.x + (i * 5), sritePosition.y - 15, 4, 10), Color.LightGreen)
+            (defaultSprite, toCameraPos (Rectangle(entityProps.position.x + (i * 5), sritePosition.y - 15, 4, 10)), Color.LightGreen)

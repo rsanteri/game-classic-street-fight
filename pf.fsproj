@@ -20,6 +20,7 @@
     <Compile Include="EntityActions.fs" />
     <Compile Include="Player.fs" />
     <Compile Include="AI.fs" />
+    <Compile Include="Camera.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
