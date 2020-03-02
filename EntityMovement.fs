@@ -42,7 +42,7 @@ let CalculatePosition (velocity: EntityVelocity) (position: EntityPosition) (spe
 let WithinBoundary(pos: EntityPosition): EntityPosition =
     let x =
         if pos.x < 0 then 0
-        else if pos.x > 1024 - 50 then 1024 - 50
+        else if pos.x > 2000 - 50 then 2000 - 50
         else pos.x
 
     let y =
