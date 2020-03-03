@@ -32,6 +32,7 @@ type Game1() as self =
     let mutable cursor = { x = 0; y = 0 }
     let mutable state =
         InGame (defaultMap(), defaultMapController() )
+    let mutable showconsole = false
 
     let mutable io = 
         { keys = Unchecked.defaultof<KeyboardState>
@@ -47,6 +48,19 @@ type Game1() as self =
 
     override self.LoadContent() = 
         ResourceManager.loadResources self.Content
+        /// Console text handler
+        self.Window.TextInput.AddHandler(fun a b ->
+            System.Diagnostics.Debug.Print (string (Keys.Back = b.Key))
+            if showconsole then
+                if Char.IsLetterOrDigit b.Character  then
+                    Console.AddToText (string b.Character)
+                else if Keys.Back = b.Key then
+                    Console.RemoveFromText ()
+                else if Keys.Space = b.Key then
+                    Console.AddToText " "
+                else if Keys.Enter = b.Key then
+                    Console.EnterCommand ()
+        )
 
     override self.Update(gameTime) =
         let keyboard = Keyboard.GetState()
@@ -56,6 +70,9 @@ type Game1() as self =
 
         /// Helper to find input actions
         let ioactions = makeIOActionState io { keys = keyboard; mouse = mouse }
+
+        if ioactions.pressed Keys.NumPad0 then
+            showconsole <- not showconsole
 
         match state with
         | Loading -> ()
@@ -69,20 +86,23 @@ type Game1() as self =
                 /// 
                 
                 /// gamestate changes. Set to pause or to menu
-                if ioactions.pressed Keys.P then
+                if showconsole then
+                    ()
+                else if ioactions.pressed Keys.P then
                     mapController.state <- Paused
                 else if ioactions.pressed Keys.Escape then
                     mapController.state <- OnMenu
 
                 /// Update player velocity according input
-                HandlePlayerMovementInput keyboard player
+                if not showconsole then
+                    HandlePlayerMovementInput keyboard player
                 /// Update action
-                if player.action = NoOp && keyboard.IsKeyDown(Keys.Space) then
-                    player.action <- Hit
+                if not showconsole then
+                    if player.action = NoOp && keyboard.IsKeyDown(Keys.Space) then
+                        player.action <- Hit
 
                 ///
                 /// Make ai decisions
-                /// 
                 /// 
                 let allEntities = List.append [player] (List.map (fun i -> i.entity) mapController.entities)
                 
@@ -150,5 +170,8 @@ type Game1() as self =
                 spriteBatch.DrawString
                     (ResourceManager.getFont "default", "MENU", Vector2(100.0f, 100.0f), Color.White)
             | Playing -> ()
+
+            if showconsole then
+                Console.DrawConsoleLog spriteBatch
 
             spriteBatch.End()

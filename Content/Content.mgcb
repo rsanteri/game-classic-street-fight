@@ -61,6 +61,13 @@
 /processorParam:TextureFormat=Color
 /build:floor.png
 
+#begin Inconsolata.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Inconsolata.spritefont
+
 #begin OdibeeSans.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

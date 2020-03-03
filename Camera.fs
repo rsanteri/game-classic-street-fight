@@ -14,9 +14,14 @@ let ToParallaxPosition (camera: XCamera) (rectangle: Rectangle) (distance: int) 
 let MoveCamera (xcamera: XCamera) (x: int) (mapsize: int) =
     if xcamera.locked then
         ()
-    // If is on left move to left
-    else if x < xcamera.x + 200 then
-        xcamera.x <- if x - 200 < 0 then 0 else x - 200
-    // If is on right move to right
-    else if x > xcamera.x + (1024 - 200) then
-        xcamera.x <- if xcamera.x > mapsize - 1024 then xcamera.x else x - 1024 + 200
+    else 
+        let newValue = 
+            // If is on left move to left
+            if x < xcamera.x + 200 then
+                if x - 200 < 0 then 0 else x - 200
+            // If is on right move to right
+            else if x > xcamera.x + (1024 - 200) then
+                if xcamera.x > mapsize - 1024 then xcamera.x else x - 1024 + 200
+            else xcamera.x
+
+        xcamera.x <- newValue
