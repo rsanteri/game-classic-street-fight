@@ -54,26 +54,6 @@ let DefaultHumanoid(pos: EntityPosition): Entity =
       action = NoOp }
 
 ///
-/// Order entities by position.y so those that are more down are rendered ON the entities more up
-///
-let OrderEntities (entitylist: Entity list) (player: Entity) =
-    entitylist
-    |> List.map NPCEntity
-    |> List.append [ PlayerEntity player ]
-    |> List.sortWith (fun a b ->
-        let ae =
-            match a with
-            | PlayerEntity ent -> ent
-            | NPCEntity ent -> ent
-
-        let be =
-            match b with
-            | PlayerEntity ent -> ent
-            | NPCEntity ent -> ent
-
-        ae.position.y - be.position.y)
-
-///
 /// Right now hitbox should always be bottom part of entity so if sprite is bigger than hitbox, we need
 /// to move it up
 ///

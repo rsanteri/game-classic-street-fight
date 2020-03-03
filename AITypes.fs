@@ -11,7 +11,8 @@ type Decision =
     | MoveNextTo of Entity
 
 type Brain =
-    { /// Decision to be operated
+    { mutable dormant : bool
+      /// Decision to be operated
       mutable decision : Decision
       /// Time to next decision (There should be something else deciding that as well)
       mutable nextDecision : int }
