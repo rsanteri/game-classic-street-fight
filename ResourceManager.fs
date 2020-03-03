@@ -20,17 +20,22 @@ let getFont a =
 
 type SpriteBank =
     { mutable box: Texture2D
-    
+      mutable citybg: Texture2D
+      mutable citybuildings: Texture2D
       mutable cityview : Texture2D }
 
 let spriteBank: SpriteBank =
     { box = Unchecked.defaultof<Texture2D>
+      citybg = Unchecked.defaultof<Texture2D>
+      citybuildings = Unchecked.defaultof<Texture2D>
       cityview = Unchecked.defaultof<Texture2D> }
 
-let getSprite a =
+let getSprite (a) =
     match a with
     | "box" -> spriteBank.box
 
+    | "citybg" -> spriteBank.citybg
+    | "citybuildings" -> spriteBank.citybuildings
     | "cityview" -> spriteBank.cityview
     | _ -> spriteBank.box
 
@@ -65,6 +70,8 @@ let playSound (a: string) = (getSound a).Play() |> ignore
 
 let loadResources (contentManager: ContentManager) =
     spriteBank.box <- contentManager.Load<Texture2D>("floor")
+    spriteBank.citybg <- contentManager.Load<Texture2D>("city_bg")
+    spriteBank.citybuildings <- contentManager.Load<Texture2D>("city_buildings")
     spriteBank.cityview <- contentManager.Load<Texture2D>("0_cityview_crop")
 
     fontBank.fdefault <- contentManager.Load<SpriteFont>("OdibeeSans")

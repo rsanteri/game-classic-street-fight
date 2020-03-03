@@ -103,6 +103,9 @@ type Game1() as self =
                     // Update walking animation
                     UpdateEntityWalking entity
                 
+                /// Update triggers after movements
+                ApplyTrigers map mapController
+
                 /// Clean up the dead
                 mapController.entities <- List.filter (fun npc -> npc.entity.properties.health > 0) mapController.entities
             
@@ -131,9 +134,8 @@ type Game1() as self =
 
             spriteBatch.Begin()
 
-            spriteBatch.Draw(ResourceManager.getSprite "cityview", Camera.ToParallaxPosition mapController.camera (Rectangle(0, 0, 1361, 600)) 10, Color.White)
-            // Street
-            spriteBatch.Draw(ResourceManager.getSprite "default", cameraPosition (Rectangle(0, 418, map.size * 2, 350)), Color.DarkGray)
+            renderStage spriteBatch map mapController.camera
+
             // Entities
             for entity in entities do
                 DrawEntity spriteBatch entity cameraPosition
