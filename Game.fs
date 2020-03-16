@@ -16,9 +16,6 @@ open AITypes
 open InputHelper
 open Stage
 
-
-
-
 type ApplicationState =
     | InGame of (Stage * StageController)
     | Loading
@@ -50,7 +47,6 @@ type Game1() as self =
         ResourceManager.loadResources self.Content
         /// Console text handler
         self.Window.TextInput.AddHandler(fun a b ->
-            System.Diagnostics.Debug.Print (string (Keys.Back = b.Key))
             if showconsole then
                 if Char.IsLetterOrDigit b.Character  then
                     Console.AddToText (string b.Character)
@@ -77,10 +73,13 @@ type Game1() as self =
         match state with
         | Loading -> ()
         | InGame (map, mapController) ->
+            if ioactions.pressed Keys.R then
+                state <- InGame (defaultMap(), defaultMapController() )
+
             let player = mapController.player
             /// Gameplay updates will only happen if we are not in menu or paused.
-            match mapController.state with
-            | Playing ->
+            match (mapController.gameState, mapController.stageState) with
+            | (Playing, StageState.Normal) ->
                 ///
                 /// Handle input
                 /// 
@@ -89,10 +88,9 @@ type Game1() as self =
                 if showconsole then
                     ()
                 else if ioactions.pressed Keys.P then
-                    mapController.state <- Paused
+                    mapController.gameState <- Paused
                 else if ioactions.pressed Keys.Escape then
-                    mapController.state <- OnMenu
-
+                    mapController.gameState <- OnMenu
                 /// Update player velocity according input
                 if not showconsole then
                     HandlePlayerMovementInput keyboard player
@@ -125,16 +123,30 @@ type Game1() as self =
                 
                 /// Update triggers after movements
                 ApplyTrigers map mapController
-
                 /// Clean up the dead
                 mapController.entities <- List.filter (fun npc -> npc.entity.properties.health > 0) mapController.entities
             
-            | Paused ->
+            | (Playing, stgState) ->
+                Debug.Print (string stgState)
+                /// Update transition animation
+                updateStageTransition mapController
+                /// Move player somewhere
+                let target =
+                    match stgState with
+                    | Entering progress -> 100
+                    | Exiting (progress, etarget) -> etarget
+                    | Normal -> player.position.x
+                    | ExitNow -> player.position.x
+
+                MoveAI mapController.player (target, player.position.y) |> ignore
+                player.position <- CalculatePosition player.velocity player.position player.speed
+
+            | (Paused, _) ->
                 if ioactions.pressed Keys.P then
-                    mapController.state <- Playing
-            | OnMenu ->
+                    mapController.gameState <- Playing
+            | (OnMenu, _) ->
                 if ioactions.pressed Keys.Escape then
-                    mapController.state <- Playing
+                    mapController.gameState <- Playing
 
             /// Move camera after everything
             Camera.MoveCamera mapController.camera player.position.x map.size
@@ -161,8 +173,12 @@ type Game1() as self =
                 DrawEntity spriteBatch entity cameraPosition
             // Cursor. Probably not needed in real game
             spriteBatch.Draw(ResourceManager.getSprite "default", Rectangle(cursor.x, cursor.y, 5, 5), Color.Red)
+
+            /// Render possible transition overlay
+            renderTransitionOverlay spriteBatch map mapController
+
             // Render message about pause or menu state
-            match mapController.state with
+            match mapController.gameState with
             | Paused ->
                 spriteBatch.DrawString
                     (ResourceManager.getFont "default", "PAUSED", Vector2(100.0f, 100.0f), Color.White)

@@ -28,6 +28,7 @@ let RemoveFromText () =
 
 let EnterCommand () =
     AddItem console.text
+    /// TODO: Add command checker here?
     console.text <- ""
 
 let TakeLast int list =

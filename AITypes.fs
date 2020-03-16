@@ -5,7 +5,7 @@ open EntityTypes
 type Decision =
     /// No operation
     | Slack
-    /// Move to static point in map
+    /// Move to static point in map (x,y)
     | MoveTo of (int * int)
     /// Try moving next to entity
     | MoveNextTo of Entity

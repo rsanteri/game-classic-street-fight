@@ -5,13 +5,18 @@ open Microsoft.Xna.Framework.Graphics
 open EntityTypes
 open AITypes
 
+type Area =
+    | Street
+    | Map
+
 type TriggerAction =
     | LockCamera of int
     | UnlockCamera
     | AddEntity of Entity
+    | Exit of int * Area
 
 type Trigger =
-    { x: int
+    { x: int * int
       mutable active: bool
       action: TriggerAction }
 
@@ -46,8 +51,16 @@ type GameState =
     | Paused
     | OnMenu
 
+type StageState =
+    | Entering of int
+    | Normal
+    /// Payload progress * target
+    | Exiting of int * int
+    | ExitNow
+
 type StageController =
-    { mutable state: GameState
+    { mutable gameState: GameState
+      mutable stageState: StageState
       camera: Camera.XCamera
       player: Entity
       mutable entities: EntityController list }
@@ -59,21 +72,29 @@ type StageController =
 let defaultMap() =
     { size = 2000
       triggers =
-          [ { x = 300
+          [ { x = (300, 400)
               active = true
               action =
                   AddEntity
                       (Entity.DefaultHumanoid
                           { x = 1024
                             y = 500 }) }
-            
-            { x = 1000
+
+            { x = (1000, 1100)
               active = true
               action =
                   AddEntity
                       (Entity.DefaultHumanoid
                           { x = 0
-                            y = 500 }) } ]
+                            y = 500 }) }
+            /// Exit to back
+            { x = (0, 50)
+              active = true
+              action = Exit (-100, Area.Map) }
+            /// Exit to forward
+            { x = (1900, 2000)
+              active = true
+              action = Exit (2100, Area.Map) } ]
       layers =
           { bg1 =
                 { sprites =
@@ -99,13 +120,14 @@ let defaultMap() =
             foreground = [] } }
 
 let defaultMapController() =
-    { state = Playing
+    { gameState = Playing
+      stageState = Entering 100
       camera =
           { x = 0
             locked = false }
       player =
           Entity.DefaultHumanoid
-              { x = 200
+              { x = -100
                 y = 500 }
       entities = [] }
 
@@ -152,13 +174,42 @@ let renderStage (spriteBatch: SpriteBatch) (stage: Stage) (camera: Camera.XCamer
          Color.DarkGray)
 
 
+let renderTransitionOverlay (spriteBatch: SpriteBatch) (stage: Stage) (stageController: StageController) =
+    let drawOverlay progress =
+        spriteBatch.Draw
+            (ResourceManager.getSprite "default", Rectangle(0, 0, stage.size, 768),
+             Color.Black * (float32 progress / 100.0f))
+    /// Enter and leave animation
+    match stageController.stageState with
+    | Entering progress ->
+        drawOverlay progress
+    | Normal -> ()
+    | Exiting (progress, target) ->
+        drawOverlay progress
+    | ExitNow ->
+        drawOverlay 100
+
 ///
 /// Stage events
 ///
 
+let updateStageTransition (stgController: StageController) =
+    match stgController.stageState with
+    | Entering progress ->
+        if progress <= 0
+        then stgController.stageState <- Normal
+        else stgController.stageState <- Entering(progress - 1)
+    | Normal -> ()
+    | Exiting (progress, target) ->
+        if progress >= 100
+        then stgController.stageState <- ExitNow
+        else stgController.stageState <- Exiting(progress + 1, target)
+    | ExitNow -> ()
+
 let ApplyTrigers (map: Stage) (mapcontroller: StageController) =
     for trigger in map.triggers do
-        if trigger.active && mapcontroller.player.position.x > trigger.x then
+        if trigger.active && mapcontroller.player.position.x > (fst trigger.x)
+           && mapcontroller.player.position.x < (snd trigger.x) then
             match trigger.action with
             | AddEntity entity ->
                 // Add new entity to mapcontroller
@@ -169,10 +220,16 @@ let ApplyTrigers (map: Stage) (mapcontroller: StageController) =
                                 { dormant = false
                                   decision = MoveNextTo mapcontroller.player
                                   nextDecision = 5000 } } ]
-                
+
                 trigger.active <- false
 
             | LockCamera x -> ()
             | UnlockCamera -> ()
+            | Exit (exitTo, exitArea) ->
+                if mapcontroller.stageState = Normal then
+                    mapcontroller.stageState <- Exiting (0, exitTo)
+                    trigger.active <- false
+
+
         else
             ()
