@@ -17,7 +17,7 @@ type Game1() as self =
     let graphics = new GraphicsDeviceManager(self)
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
     let mutable state = Global.createState (Global.InGame(defaultMap(), defaultMapController()))
-
+    let mutable consoleCommands: Console.ConsoleCommand list = []
 
     override self.Initialize() =
         do spriteBatch <- new SpriteBatch(self.GraphicsDevice)
@@ -30,7 +30,9 @@ type Game1() as self =
     override self.LoadContent() =
         ResourceManager.loadResources self.Content
         /// Console text handler
-        self.Window.TextInput.AddHandler(fun a b -> Console.update state b)
+        self.Window.TextInput.AddHandler(fun a b ->
+            let commands = Console.update state b
+            consoleCommands <- List.concat [ commands; consoleCommands ])
 
     override self.Update(gameTime) =
         let keyboard = Keyboard.GetState()
@@ -55,6 +57,21 @@ type Game1() as self =
             { keys = keyboard
               mouse = mouse }
 
+        ///
+        /// Run commands called from console
+        ///
+        for command in consoleCommands do
+            match command with
+            | Console.ConsoleCommand.SetResolution(width, height) ->
+                graphics.PreferredBackBufferWidth <- width
+                graphics.PreferredBackBufferHeight <- height
+                graphics.ApplyChanges()
+            | Console.ConsoleCommand.Restart ->
+                match state.state with
+                | InGame _ -> state.state <- InGame(defaultMap(), defaultMapController())
+                | Loading -> ()
+
+        consoleCommands <- []
 
     override self.Draw(gameTime) =
         do self.GraphicsDevice.Clear Color.DarkSlateBlue

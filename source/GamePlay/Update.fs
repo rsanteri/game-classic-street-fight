@@ -14,7 +14,6 @@ let update
     (map: Stage)
     (mapController: StageController)
     =
-    if ioactions.pressed Keys.R then state.state <- InGame(defaultMap(), defaultMapController())
 
     let player = mapController.player
     /// Gameplay updates will only happen if we are not in menu or paused.
