@@ -4,72 +4,15 @@ open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open EntityTypes
 open AITypes
+open StageTypes
 
-type Area =
-    | Street
-    | Map
 
-type TriggerAction =
-    | LockCamera of int
-    | UnlockCamera
-    | AddEntity of Entity
-    | Exit of int * Area
-
-type Trigger =
-    { x: int * int
-      mutable active: bool
-      action: TriggerAction }
-
-type StaticSprite =
-    { sprite: string
-      position: EntityPosition
-      size: Size }
-
-type DrawLayer =
-    { sprites: StaticSprite list
-      distance: int }
-
-type StageLayers =
-    { bg1: DrawLayer
-      bg2: DrawLayer
-      street: StaticSprite list
-      foreground: StaticSprite list }
-
-///
-/// Stage should present just the static map. Where to hold ai?
-///
-type Stage =
-    { /// Define length of stage
-      size: int
-      /// Define list of triggers.
-      triggers: Trigger list
-      /// Define graphics for different layers of stage
-      layers: StageLayers }
-
-type GameState =
-    | Playing
-    | Paused
-    | OnMenu
-
-type StageState =
-    | Entering of int
-    | Normal
-    /// Payload progress * target
-    | Exiting of int * int
-    | ExitNow
-
-type StageController =
-    { mutable gameState: GameState
-      mutable stageState: StageState
-      camera: Camera.XCamera
-      player: Entity
-      mutable entities: EntityController list }
 
 ///
 /// Default values
 ///
 
-let defaultMap() =
+let defaultMap(): Stage =
     { size = 2000
       triggers =
           [ { x = (300, 400)
@@ -90,11 +33,11 @@ let defaultMap() =
             /// Exit to back
             { x = (0, 50)
               active = true
-              action = Exit (-100, Area.Map) }
+              action = Exit(-100, Area.Map) }
             /// Exit to forward
             { x = (1900, 2000)
               active = true
-              action = Exit (2100, Area.Map) } ]
+              action = Exit(2100, Area.Map) } ]
       layers =
           { bg1 =
                 { sprites =
@@ -119,7 +62,7 @@ let defaultMap() =
             street = []
             foreground = [] } }
 
-let defaultMapController() =
+let defaultMapController(): StageController =
     { gameState = Playing
       stageState = Entering 100
       camera =
@@ -134,7 +77,7 @@ let defaultMapController() =
 ///
 /// Order entities by position.y so those that are more down are rendered ON the entities more up
 ///
-let OrderEntities(map: StageController) =
+let OrderEntities(map: StageController): RenderableEntity list =
     let entities = List.map (fun i -> i.entity) map.entities
 
     entities
@@ -157,7 +100,7 @@ let OrderEntities(map: StageController) =
 /// Stage drawing
 ///
 
-let drawLayer (spriteBatch: SpriteBatch) (layer: DrawLayer) (camera: Camera.XCamera) =
+let drawLayer (spriteBatch: SpriteBatch) (layer: DrawLayer) (camera: XCamera) =
     for sprite in layer.sprites do
         spriteBatch.Draw
             (ResourceManager.getSprite sprite.sprite,
@@ -165,7 +108,7 @@ let drawLayer (spriteBatch: SpriteBatch) (layer: DrawLayer) (camera: Camera.XCam
                  (Rectangle(sprite.position.x, sprite.position.y, sprite.size.width, sprite.size.height))
                  layer.distance, Color.White)
 
-let renderStage (spriteBatch: SpriteBatch) (stage: Stage) (camera: Camera.XCamera) =
+let renderStage (spriteBatch: SpriteBatch) (stage: Stage) (camera: XCamera) =
     drawLayer spriteBatch stage.layers.bg1 camera
     drawLayer spriteBatch stage.layers.bg2 camera
     // Street
@@ -181,13 +124,10 @@ let renderTransitionOverlay (spriteBatch: SpriteBatch) (stage: Stage) (stageCont
              Color.Black * (float32 progress / 100.0f))
     /// Enter and leave animation
     match stageController.stageState with
-    | Entering progress ->
-        drawOverlay progress
+    | Entering progress -> drawOverlay progress
     | Normal -> ()
-    | Exiting (progress, target) ->
-        drawOverlay progress
-    | ExitNow ->
-        drawOverlay 100
+    | Exiting(progress, target) -> drawOverlay progress
+    | ExitNow -> drawOverlay 100
 
 ///
 /// Stage events
@@ -200,7 +140,7 @@ let updateStageTransition (stgController: StageController) =
         then stgController.stageState <- Normal
         else stgController.stageState <- Entering(progress - 1)
     | Normal -> ()
-    | Exiting (progress, target) ->
+    | Exiting(progress, target) ->
         if progress >= 100
         then stgController.stageState <- ExitNow
         else stgController.stageState <- Exiting(progress + 1, target)
@@ -225,9 +165,9 @@ let ApplyTrigers (map: Stage) (mapcontroller: StageController) =
 
             | LockCamera x -> ()
             | UnlockCamera -> ()
-            | Exit (exitTo, exitArea) ->
+            | Exit(exitTo, exitArea) ->
                 if mapcontroller.stageState = Normal then
-                    mapcontroller.stageState <- Exiting (0, exitTo)
+                    mapcontroller.stageState <- Exiting(0, exitTo)
                     trigger.active <- false
 
 

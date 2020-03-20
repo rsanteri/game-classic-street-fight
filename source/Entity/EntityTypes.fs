@@ -46,7 +46,7 @@ type EntityWalking =
     | LeftLegUp
     | RightLegUp
 
-type Facing = 
+type Facing =
     | Left
     | Right
 
@@ -58,8 +58,8 @@ type Entity =
       /// Value between -100 and 100 for x and y axis to get movement speed
       velocity: EntityVelocity
       /// Speed how fast velocity accumulates. for example
-      /// - velocitySpeed = 10 would take 10 frames to reach maximum speed. 
-      /// - velocitySpeed = 100 would take 1 frames to reach maximum speed. 
+      /// - velocitySpeed = 10 would take 10 frames to reach maximum speed.
+      /// - velocitySpeed = 100 would take 1 frames to reach maximum speed.
       velocitySpeed: int
       /// Maximum speed`
       speed: int
@@ -67,9 +67,9 @@ type Entity =
       properties: EntityProperties
       /// How should i do this?
       body: EntityBodyParts
-      mutable walking : EntityWalking
+      mutable walking: EntityWalking
       /// Which way entity is facing?
-      mutable facing : Facing
+      mutable facing: Facing
       /// Active action. Only one at a time.
       mutable action: EntityAction }
 

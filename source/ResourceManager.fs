@@ -7,9 +7,10 @@ open Microsoft.Xna.Framework.Audio
 // Fonts
 
 type FontBank =
-    { mutable fdefault: SpriteFont; mutable console: SpriteFont }
+    { mutable fdefault: SpriteFont
+      mutable console: SpriteFont }
 
-let fontBank: FontBank = 
+let fontBank: FontBank =
     { fdefault = Unchecked.defaultof<SpriteFont>
       console = Unchecked.defaultof<SpriteFont> }
 
@@ -25,7 +26,7 @@ type SpriteBank =
     { mutable box: Texture2D
       mutable citybg: Texture2D
       mutable citybuildings: Texture2D
-      mutable cityview : Texture2D }
+      mutable cityview: Texture2D }
 
 let spriteBank: SpriteBank =
     { box = Unchecked.defaultof<Texture2D>
@@ -43,7 +44,7 @@ let getSprite (a) =
     | _ -> spriteBank.box
 
 // Sounds
-(* 
+(*
 type SoundBank =
     { mutable music: SoundEffect
       mutable move: SoundEffect
@@ -79,9 +80,9 @@ let loadResources (contentManager: ContentManager) =
 
     fontBank.fdefault <- contentManager.Load<SpriteFont>("OdibeeSans")
     fontBank.console <- contentManager.Load<SpriteFont>("Inconsolata")
-
 (*     soundBank.music <- contentManager.Load<SoundEffect>("beat")
     soundBank.move <- contentManager.Load<SoundEffect>("move_click")
     soundBank.goal <- contentManager.Load<SoundEffect>("goal_sound")
     soundBank.error <- contentManager.Load<SoundEffect>("move_error")
     soundBank.pressSwitch <- contentManager.Load<SoundEffect>("press") *)
+

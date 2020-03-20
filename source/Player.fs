@@ -6,8 +6,8 @@ open EntityMovement
 
 ///
 /// Update player velocity and facing by player input. Doesnt care about collisions
-/// 
-let HandlePlayerMovementInput (keyboard: KeyboardState) player = 
+///
+let HandlePlayerMovementInput (keyboard: KeyboardState) player =
     // Handle vertical movement
     if keyboard.IsKeyDown(Keys.W) || keyboard.IsKeyDown(Keys.S) then
         let dir =

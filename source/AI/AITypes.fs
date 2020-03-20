@@ -11,13 +11,12 @@ type Decision =
     | MoveNextTo of Entity
 
 type Brain =
-    { mutable dormant : bool
+    { mutable dormant: bool
       /// Decision to be operated
-      mutable decision : Decision
+      mutable decision: Decision
       /// Time to next decision (There should be something else deciding that as well)
-      mutable nextDecision : int }
+      mutable nextDecision: int }
 
 type EntityController =
-    { brain : Brain
-      entity : Entity
-    }
+    { brain: Brain
+      entity: Entity }

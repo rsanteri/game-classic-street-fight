@@ -4,9 +4,9 @@ open EntityTypes
 open System.Diagnostics
 
 ///
-/// Add velocity within the limit. 
+/// Add velocity within the limit.
 /// NOTE: Need to think is this kind of limitation good. For example for impacts we might want yuge velocity
-/// 
+///
 let AddVelocity (current: int) (add: int) =
     let newVelocity = current + add
 
@@ -16,7 +16,7 @@ let AddVelocity (current: int) (add: int) =
 
 ///
 /// Slow down velocity when there is no input
-/// 
+///
 let NaturalSlowVelocity(current: int): int =
     if current = 0 then 0
     else if current > 0 then if current - 10 < 0 then 0 else current - 10
@@ -26,7 +26,7 @@ let NaturalSlowVelocity(current: int): int =
 ///
 /// Calculate position according position, velocity and speed
 /// newposition = position + ( velocity * speed )
-/// 
+///
 let CalculatePosition (velocity: EntityVelocity) (position: EntityPosition) (speed: int): EntityPosition =
     let x = float32 position.x + (float32 (velocity.x) / 100.0f * float32 speed)
     let y = float32 position.y + (float32 (velocity.y) / 100.0f * (float32 speed / 2.0f))
@@ -35,10 +35,10 @@ let CalculatePosition (velocity: EntityVelocity) (position: EntityPosition) (spe
       y = int y }
 
 ///
-/// Check that position is within playground. 
+/// Check that position is within playground.
 /// NOTE: This wont work with moving camera and values should come from some global state
 /// management
-/// 
+///
 let WithinBoundary(pos: EntityPosition): EntityPosition =
     let x =
         if pos.x < 0 then 0
@@ -61,26 +61,23 @@ let IsBottomCollision (a: EntityPosition) (b: EntityPosition) (asize: Size) = a.
 
 ///
 /// Check collision between two entities
-/// 
+///
 let IsColliding (a: Entity) (b: Entity) =
-    IsLeftCollision a.position b.position b.size.original && 
-    IsRightCollision a.position b.position a.size.original &&
-    IsTopCollision a.position b.position b.size.original &&
-    IsBottomCollision a.position b.position a.size.original
+    IsLeftCollision a.position b.position b.size.original && IsRightCollision a.position b.position a.size.original
+    && IsTopCollision a.position b.position b.size.original
+    && IsBottomCollision a.position b.position a.size.original
 
 ///
 /// Check collision between bodypart and entity
-/// 
+///
 let IsBodyPartColliding (a: EntityBodyPart) (b: Entity) =
-    IsLeftCollision a.position b.position b.size.original && 
-    IsRightCollision a.position b.position a.size &&
-    IsTopCollision a.position b.position b.size.original &&
-    IsBottomCollision a.position b.position a.size
+    IsLeftCollision a.position b.position b.size.original && IsRightCollision a.position b.position a.size
+    && IsTopCollision a.position b.position b.size.original && IsBottomCollision a.position b.position a.size
 
 ///
 /// Try to find out collision direction (Where did it come from)
 /// Now using overlapping amount as comparing value.
-/// 
+///
 let CollisionDirection a b =
     let leftCollision = a.position.x - (b.position.x + b.size.original.width)
     let rightCollision = b.position.x - (a.position.x + a.size.original.width)
@@ -102,7 +99,7 @@ let CollisionDirection a b =
 ///
 let MoveEntity (entity: Entity) (entities: Entity list) =
     entity.position <- WithinBoundary(CalculatePosition entity.velocity entity.position entity.speed)
-    
+
     let collisions = entities |> List.filter (fun item -> IsColliding entity item)
 
     for collision in collisions do

@@ -22,7 +22,7 @@ let MakeDecision (brain: Brain) (entity: Entity) (entities: Entity list) =
     brain.nextDecision <- 1000
     brain.decision <- MoveTo(0, 0)
 
-let MoveAI entity (x, y) =
+let MoveAI (entity: Entity) (x, y) =
     let radians = atan2 (float (y - entity.position.y)) (float (x - entity.position.x))
     let degrees = radians % 360.0
 
@@ -38,10 +38,10 @@ let MoveAI entity (x, y) =
         then 0
         else AddVelocity entity.velocity.y (int (float entity.velocitySpeed * sin degrees))
 
-    if entity.velocity.x > 0 && entity.facing = Left then
-        entity.facing <- Right
-    else if entity.velocity.x < 0 && entity.facing = Right then
-        entity.facing <- Left
+    if entity.velocity.x > 0 && entity.facing = Left
+    then entity.facing <- Right
+    else if entity.velocity.x < 0 && entity.facing = Right
+    then entity.facing <- Left
 
     isCloseEnoughX && isCloseEnoughY
 
@@ -60,14 +60,15 @@ let OperateNPC (entityController: EntityController) (entities: Entity list) (fra
     | Slack -> ignore 0
     | MoveTo target ->
         let closeEnough = MoveAI entity target
-        if closeEnough then
-            brain.decision <- Slack
-    | MoveNextTo ent -> 
+        if closeEnough then brain.decision <- Slack
+    | MoveNextTo ent ->
         let targetAtLeftSide = ent.position.x < entity.position.x
 
-        let target = if targetAtLeftSide then (ent.position.x + ent.size.original.width + 5, ent.position.y) else (ent.position.x - entity.size.original.width, ent.position.y) 
+        let target =
+            if targetAtLeftSide
+            then (ent.position.x + ent.size.original.width + 5, ent.position.y)
+            else (ent.position.x - entity.size.original.width, ent.position.y)
         MoveAI entity target |> ignore
 
-        if entity.action = NoOp then
-            entity.action <- Hit
+        if entity.action = NoOp then entity.action <- Hit
         ()

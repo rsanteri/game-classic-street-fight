@@ -8,7 +8,7 @@ open EntityTypes
 
 let mutable entityIndex = 0
 
-let DefaulBodyPart pos distance size =
+let DefaulBodyPart (pos: EntityPosition) (distance: int) (size: int): EntityBodyPart =
     { position = pos
       basePosition = pos
       velocity =
@@ -57,7 +57,7 @@ let DefaultHumanoid(pos: EntityPosition): Entity =
 /// Right now hitbox should always be bottom part of entity so if sprite is bigger than hitbox, we need
 /// to move it up
 ///
-let GetSpritePosition(entity: Entity) =
+let GetSpritePosition(entity: Entity): EntityPosition =
     if entity.size.original = entity.size.sprite then
         entity.position
     else
@@ -86,21 +86,24 @@ let DrawEntity (spriteBatch: SpriteBatch) (entity: RenderableEntity) (toCameraPo
 
     spriteBatch.Draw
         (defaultSprite,
-         toCameraPos (Rectangle(sritePosition.x, sritePosition.y, entityProps.size.sprite.width, entityProps.size.sprite.height)),
+         toCameraPos
+             (Rectangle(sritePosition.x, sritePosition.y, entityProps.size.sprite.width, entityProps.size.sprite.height)),
          (if isPlayer then Color.White else Color.Red))
 
     // Draw hitbox
     spriteBatch.Draw
         (defaultSprite,
-         toCameraPos (Rectangle
-             (entityProps.position.x, entityProps.position.y, entityProps.size.original.width,
-              entityProps.size.original.height)), Color.LightBlue * 0.5f)
+         toCameraPos
+             (Rectangle
+                 (entityProps.position.x, entityProps.position.y, entityProps.size.original.width,
+                  entityProps.size.original.height)), Color.LightBlue * 0.5f)
 
     // Draw body parts
     let handPos = BodyPartPosition entityProps entityProps.body.hand
     spriteBatch.Draw
         (defaultSprite,
-         toCameraPos (Rectangle(handPos.x, handPos.y, entityProps.body.hand.size.width, entityProps.body.hand.size.height)),
+         toCameraPos
+             (Rectangle(handPos.x, handPos.y, entityProps.body.hand.size.width, entityProps.body.hand.size.height)),
          Color.DarkBlue)
 
     let llegPos = BodyPartPosition entityProps entityProps.body.lleg
@@ -108,15 +111,18 @@ let DrawEntity (spriteBatch: SpriteBatch) (entity: RenderableEntity) (toCameraPo
 
     spriteBatch.Draw
         (defaultSprite,
-         toCameraPos (Rectangle(llegPos.x, llegPos.y, entityProps.body.lleg.size.width, entityProps.body.lleg.size.height)),
+         toCameraPos
+             (Rectangle(llegPos.x, llegPos.y, entityProps.body.lleg.size.width, entityProps.body.lleg.size.height)),
          Color.SandyBrown)
 
     spriteBatch.Draw
         (defaultSprite,
-         toCameraPos (Rectangle(rlegPos.x, rlegPos.y, entityProps.body.rleg.size.width, entityProps.body.rleg.size.height)),
+         toCameraPos
+             (Rectangle(rlegPos.x, rlegPos.y, entityProps.body.rleg.size.width, entityProps.body.rleg.size.height)),
          Color.SandyBrown)
 
     // Draw health
     for i in 0 .. entityProps.properties.health do
         spriteBatch.Draw
-            (defaultSprite, toCameraPos (Rectangle(entityProps.position.x + (i * 5), sritePosition.y - 15, 4, 10)), Color.LightGreen)
+            (defaultSprite, toCameraPos (Rectangle(entityProps.position.x + (i * 5), sritePosition.y - 15, 4, 10)),
+             Color.LightGreen)
