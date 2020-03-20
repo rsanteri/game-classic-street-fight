@@ -5,7 +5,7 @@ open Microsoft.Xna.Framework
 open StageTypes
 
 let renderGamePlay
-    (appState: Global.GlobalState)
+    (state: Global.GlobalState)
     (spriteBatch: Graphics.SpriteBatch)
     (mapController: StageController)
     (map: Stage)
@@ -22,8 +22,7 @@ let renderGamePlay
         Entity.DrawEntity spriteBatch entity cameraPosition
 
     // Cursor. Probably not needed in real game
-    spriteBatch.Draw
-        (ResourceManager.getSprite "default", Rectangle(appState.cursor.x, appState.cursor.y, 5, 5), Color.Red)
+    spriteBatch.Draw(ResourceManager.getSprite "default", Rectangle(state.cursor.x, state.cursor.y, 5, 5), Color.Red)
 
     /// Render possible transition overlay
     Stage.renderTransitionOverlay spriteBatch map mapController
@@ -35,6 +34,6 @@ let renderGamePlay
     | OnMenu -> spriteBatch.DrawString(ResourceManager.getFont "default", "MENU", Vector2(100.0f, 100.0f), Color.White)
     | Playing -> ()
 
-    if appState.console then Console.DrawConsoleLog spriteBatch
+    if state.console then Console.DrawConsoleLog state spriteBatch
 
     spriteBatch.End()

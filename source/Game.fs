@@ -70,6 +70,7 @@ type Game1() as self =
                 match state.state with
                 | InGame _ -> state.state <- InGame(defaultMap(), defaultMapController())
                 | Loading -> ()
+            | Console.ConsoleCommand.ExitApp -> exit 0
 
         consoleCommands <- []
 

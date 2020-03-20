@@ -19,6 +19,7 @@ type ConsoleModel =
 type ConsoleCommand =
     | SetResolution of int * int
     | Restart
+    | ExitApp
 
 let console =
     { text = ""
@@ -57,6 +58,7 @@ let EnterCommand(): ConsoleCommand list =
         match Seq.toList (console.text.Split(" ")) with
         | [ "restart" ] -> [ Restart ]
         | [ "setresolution"; w; h ] -> [ SetResolution(int w, int h) ]
+        | [ "exit" ] -> [ ExitApp ]
         | _ -> []
 
     if List.isEmpty command then AddErrorItem(console.text + " is not recognized command.")
@@ -89,9 +91,13 @@ let datedText (item: ConsoleItem) =
 /// Render
 ///
 
-let DrawConsoleLog(spriteBatch: Graphics.SpriteBatch) =
-    spriteBatch.Draw(ResourceManager.getSprite "box", Rectangle(0, 0, 1024, 500), (Color.Brown * 0.5f))
-    spriteBatch.Draw(ResourceManager.getSprite "box", Rectangle(0, 15 * 32, 1024, 20), (Color.Green * 0.5f))
+let DrawConsoleLog (state: Global.GlobalState) (spriteBatch: Graphics.SpriteBatch) =
+    /// Console background
+    spriteBatch.Draw
+        (ResourceManager.getSprite "box", Rectangle(0, 0, state.resolution.width, 500), (Color.Brown * 0.5f))
+    /// Input field
+    spriteBatch.Draw
+        (ResourceManager.getSprite "box", Rectangle(0, 15 * 32, state.resolution.width, 20), (Color.Green * 0.5f))
 
     let mutable i = 0
     /// Draw messages
