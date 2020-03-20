@@ -84,4 +84,4 @@ let update
         if ioactions.pressed Keys.Escape then mapController.gameState <- Playing
 
     /// Move camera after everything
-    Camera.MoveCamera mapController.camera player.position.x map.size
+    Camera.MoveCamera state.resolution mapController.camera player.position.x map.size

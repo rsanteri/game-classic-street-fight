@@ -21,8 +21,8 @@ type Game1() as self =
 
     override self.Initialize() =
         do spriteBatch <- new SpriteBatch(self.GraphicsDevice)
-        graphics.PreferredBackBufferWidth <- 1024
-        graphics.PreferredBackBufferHeight <- 768
+        graphics.PreferredBackBufferWidth <- state.resolution.width
+        graphics.PreferredBackBufferHeight <- state.resolution.height
         graphics.ApplyChanges()
         do base.Initialize()
         ()

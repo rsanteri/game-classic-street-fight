@@ -9,17 +9,17 @@ let ToCameraPosition (camera: StageTypes.XCamera) (rectangle: Rectangle) =
 let ToParallaxPosition (camera: StageTypes.XCamera) (rectangle: Rectangle) (distance: int) =
     Rectangle(rectangle.X - (camera.x * distance / 100), rectangle.Y, rectangle.Width, rectangle.Height)
 
-let MoveCamera (xcamera: StageTypes.XCamera) (x: int) (mapsize: int) =
+let MoveCamera (resolution: Global.Resolution) (xcamera: StageTypes.XCamera) (x: int) (mapsize: int) =
     if xcamera.locked then
         ()
     else
         let newValue =
             // If is on left move to left
-            if x < xcamera.x + 200 then
-                if x - 200 < 0 then 0 else x - 200
+            if x < xcamera.x + 400 then
+                if x - 400 < 0 then 0 else x - 400
             // If is on right move to right
-            else if x > xcamera.x + (1024 - 200) then
-                if xcamera.x > mapsize - 1024 then xcamera.x else x - 1024 + 200
+            else if x > xcamera.x + (resolution.width - 400) then
+                if xcamera.x > mapsize - resolution.width then xcamera.x else x - resolution.width + 400
             else
                 xcamera.x
 
