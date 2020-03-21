@@ -16,7 +16,7 @@ type Game1() as self =
     do self.Content.RootDirectory <- "Content"
     let graphics = new GraphicsDeviceManager(self)
     let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
-    let mutable state = Global.createState (Global.InGame(defaultMap(), defaultMapController()))
+    let mutable state = Global.createState (Global.InGame(Street.Area1.init()))
     let mutable consoleCommands: Console.ConsoleCommand list = []
 
     override self.Initialize() =
@@ -50,6 +50,7 @@ type Game1() as self =
 
         match state.state with
         | Loading -> ()
+        | InMap -> Map.Update.update()
         | InGame(map, mapController) -> GamePlay.Update.update gameTime state ioactions map mapController
 
         /// Save io state for next frame
@@ -68,7 +69,8 @@ type Game1() as self =
                 graphics.ApplyChanges()
             | Console.ConsoleCommand.Restart ->
                 match state.state with
-                | InGame _ -> state.state <- InGame(defaultMap(), defaultMapController())
+                | InGame(map, _) -> state.state <- InGame(Areas.init map.area)
+                | InMap -> ()
                 | Loading -> ()
             | Console.ConsoleCommand.ExitApp -> exit 0
 
@@ -79,4 +81,9 @@ type Game1() as self =
 
         match state.state with
         | Loading -> ()
+        | InMap -> Map.Render.render state spriteBatch
         | InGame(map, mapController) -> GamePlay.Render.renderGamePlay state spriteBatch mapController map
+
+        spriteBatch.Begin()
+        if state.console then Console.DrawConsoleLog state spriteBatch
+        spriteBatch.End()

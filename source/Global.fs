@@ -6,6 +6,7 @@ type Resolution =
 
 type ApplicationState =
     | InGame of (StageTypes.Stage * StageTypes.StageController)
+    | InMap
     | Loading
 
 type GlobalState =

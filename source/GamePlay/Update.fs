@@ -18,7 +18,7 @@ let update
     let player = mapController.player
     /// Gameplay updates will only happen if we are not in menu or paused.
     match (mapController.gameState, mapController.stageState) with
-    | (Playing, StageTypes.StageState.Normal) ->
+    | (Playing, StageState.Normal) ->
         ///
         /// Handle input
         ///
@@ -69,10 +69,15 @@ let update
         /// Move player somewhere
         let target =
             match stgState with
-            | Entering progress -> 100
-            | Exiting(progress, etarget) -> etarget
+            | Entering _ -> 100
+            | Exiting(_, etarget, _) -> etarget
             | Normal -> player.position.x
-            | ExitNow -> player.position.x
+            | ExitNow nextStage ->
+                if nextStage = StageTypes.Area.Map
+                then state.state <- InMap
+                else state.state <- InGame(Areas.init nextStage)
+
+                player.position.x
 
         AI.MoveAI mapController.player (target, player.position.y) |> ignore
         player.position <- EntityMovement.CalculatePosition player.velocity player.position player.speed

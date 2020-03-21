@@ -15,7 +15,8 @@ type XCamera =
 ///
 
 type Area =
-    | Street
+    | Street1
+    | Street2
     | Map
 
 type TriggerAction =
@@ -39,8 +40,7 @@ type DrawLayer =
       distance: int }
 
 type StageLayers =
-    { bg1: DrawLayer
-      bg2: DrawLayer
+    { bg: DrawLayer list
       street: StaticSprite list
       foreground: StaticSprite list }
 
@@ -48,7 +48,8 @@ type StageLayers =
 /// Stage should present just the static map. Where to hold ai?
 ///
 type Stage =
-    { /// Define length of stage
+    { area: Area
+      /// Define length of stage
       size: int
       /// Define list of triggers.
       triggers: Trigger list
@@ -64,8 +65,8 @@ type StageState =
     | Entering of int
     | Normal
     /// Payload progress * target
-    | Exiting of int * int
-    | ExitNow
+    | Exiting of int * int * Area
+    | ExitNow of Area
 
 type StageController =
     { mutable gameState: GameState

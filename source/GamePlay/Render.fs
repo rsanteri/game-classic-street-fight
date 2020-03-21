@@ -34,6 +34,6 @@ let renderGamePlay
     | OnMenu -> spriteBatch.DrawString(ResourceManager.getFont "default", "MENU", Vector2(100.0f, 100.0f), Color.White)
     | Playing -> ()
 
-    if state.console then Console.DrawConsoleLog state spriteBatch
+    spriteBatch.DrawString(ResourceManager.getFont "default", string map.area, Vector2(5.0f, 5.0f), Color.White)
 
     spriteBatch.End()

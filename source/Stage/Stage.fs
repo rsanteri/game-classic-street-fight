@@ -6,74 +6,6 @@ open EntityTypes
 open AITypes
 open StageTypes
 
-
-
-///
-/// Default values
-///
-
-let defaultMap(): Stage =
-    { size = 2000
-      triggers =
-          [ { x = (300, 400)
-              active = true
-              action =
-                  AddEntity
-                      (Entity.DefaultHumanoid
-                          { x = 1024
-                            y = 500 }) }
-
-            { x = (1000, 1100)
-              active = true
-              action =
-                  AddEntity
-                      (Entity.DefaultHumanoid
-                          { x = 0
-                            y = 500 }) }
-            /// Exit to back
-            { x = (0, 50)
-              active = true
-              action = Exit(-100, Area.Map) }
-            /// Exit to forward
-            { x = (1900, 2000)
-              active = true
-              action = Exit(2100, Area.Map) } ]
-      layers =
-          { bg1 =
-                { sprites =
-                      [ { sprite = "citybg"
-                          position =
-                              { x = 0
-                                y = 0 }
-                          size =
-                              { width = 1361
-                                height = 600 } } ]
-                  distance = 10 }
-            bg2 =
-                { sprites =
-                      [ { sprite = "citybuildings"
-                          position =
-                              { x = 0
-                                y = -100 }
-                          size =
-                              { width = 1361
-                                height = 600 } } ]
-                  distance = 30 }
-            street = []
-            foreground = [] } }
-
-let defaultMapController(): StageController =
-    { gameState = Playing
-      stageState = Entering 100
-      camera =
-          { x = 0
-            locked = false }
-      player =
-          Entity.DefaultHumanoid
-              { x = -100
-                y = 500 }
-      entities = [] }
-
 ///
 /// Order entities by position.y so those that are more down are rendered ON the entities more up
 ///
@@ -109,8 +41,9 @@ let drawLayer (spriteBatch: SpriteBatch) (layer: DrawLayer) (camera: XCamera) =
                  layer.distance, Color.White)
 
 let renderStage (spriteBatch: SpriteBatch) (stage: Stage) (camera: XCamera) =
-    drawLayer spriteBatch stage.layers.bg1 camera
-    drawLayer spriteBatch stage.layers.bg2 camera
+    for layer in stage.layers.bg do
+        drawLayer spriteBatch layer camera
+
     // Street
     spriteBatch.Draw
         (ResourceManager.getSprite "default", Camera.ToCameraPosition camera (Rectangle(0, 418, stage.size * 2, 350)),
@@ -126,8 +59,8 @@ let renderTransitionOverlay (spriteBatch: SpriteBatch) (stage: Stage) (stageCont
     match stageController.stageState with
     | Entering progress -> drawOverlay progress
     | Normal -> ()
-    | Exiting(progress, target) -> drawOverlay progress
-    | ExitNow -> drawOverlay 100
+    | Exiting(progress, _, _) -> drawOverlay progress
+    | ExitNow _ -> drawOverlay 100
 
 ///
 /// Stage events
@@ -140,11 +73,11 @@ let updateStageTransition (stgController: StageController) =
         then stgController.stageState <- Normal
         else stgController.stageState <- Entering(progress - 1)
     | Normal -> ()
-    | Exiting(progress, target) ->
+    | Exiting(progress, target, exitTo) ->
         if progress >= 100
-        then stgController.stageState <- ExitNow
-        else stgController.stageState <- Exiting(progress + 1, target)
-    | ExitNow -> ()
+        then stgController.stageState <- ExitNow exitTo
+        else stgController.stageState <- Exiting(progress + 1, target, exitTo)
+    | ExitNow _ -> ()
 
 let ApplyTrigers (map: Stage) (mapcontroller: StageController) =
     for trigger in map.triggers do
@@ -167,7 +100,7 @@ let ApplyTrigers (map: Stage) (mapcontroller: StageController) =
             | UnlockCamera -> ()
             | Exit(exitTo, exitArea) ->
                 if mapcontroller.stageState = Normal then
-                    mapcontroller.stageState <- Exiting(0, exitTo)
+                    mapcontroller.stageState <- Exiting(0, exitTo, exitArea)
                     trigger.active <- false
 
 

@@ -15,20 +15,32 @@
     <Compile Include="source/Entity/EntityTypes.fs" />
     <Compile Include="source/AI/AITypes.fs" />
     <Compile Include="source/Stage/StageTypes.fs" />
+    <Compile Include="source/ResourceManager.fs" />
     <Compile Include="source/InputHelper.fs" />
     <Compile Include="source/Global.fs" />
+
     <Compile Include="source/UI/Cursor.fs" />
-    <Compile Include="source/ResourceManager.fs" />
+
     <Compile Include="source/Entity/Entity.fs" />
     <Compile Include="source/Entity/EntityMovement.fs" />
     <Compile Include="source/Entity/EntityActions.fs" />
     <Compile Include="source/Player.fs" />
     <Compile Include="source/AI/AI.fs" />
+
     <Compile Include="source/Console/Console.fs" />
     <Compile Include="source/Stage/Camera.fs" />
     <Compile Include="source/Stage/Stage.fs" />
+
+    <Compile Include="source/Areas/Street/Area1.fs" />
+    <Compile Include="source/Areas/Street/Area2.fs" />
+    <Compile Include="source/Areas/Areas.fs" />
+
+    <Compile Include="source/Map/Update.fs"/>
+    <Compile Include="source/Map/Render.fs"/>
+
     <Compile Include="source/GamePlay/Update.fs" />
     <Compile Include="source/GamePlay/Render.fs" />
+
     <Compile Include="source/Game.fs" />
     <Compile Include="source/Program.fs" />
   </ItemGroup>
