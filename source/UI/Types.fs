@@ -1,4 +1,4 @@
-module UITypes
+module UI.Types
 
 type CursorState =
     { x: int

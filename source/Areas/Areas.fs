@@ -1,8 +1,8 @@
 module Areas
 
-open StageTypes
+open Stage.Types
 
-let init (area: Area): StageTypes.Stage * StageTypes.StageController =
+let init (area: Area): Stage * StageController =
     match area with
     | Map -> (Street.Area1.init())
     | Street1 -> (Street.Area1.init())

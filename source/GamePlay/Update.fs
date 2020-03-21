@@ -4,8 +4,8 @@ open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Input
 
 open Global
-open StageTypes
-open Stage
+open Stage.Types
+open Stage.Update
 
 let update
     (gameTime: GameTime)
@@ -32,25 +32,25 @@ let update
         if not state.console then
             Player.HandlePlayerMovementInput state.io.keys player
 
-            if player.action = EntityTypes.EntityAction.NoOp && state.io.keys.IsKeyDown(Keys.Space) then
-                player.action <- EntityTypes.Hit
+            if player.action = Entity.Types.EntityAction.NoOp && state.io.keys.IsKeyDown(Keys.Space) then
+                player.action <- Entity.Types.Hit
 
         ///
         /// Make ai decisions
         ///
         let allEntities =
-            List.append [ player ] (List.map (fun (i: AITypes.EntityController) -> i.entity) mapController.entities)
+            List.append [ player ] (List.map (fun (i: AI.Types.EntityController) -> i.entity) mapController.entities)
 
         for controlledEntity in mapController.entities do
             if not controlledEntity.brain.dormant then
-                AI.OperateNPC controlledEntity allEntities gameTime.ElapsedGameTime.Milliseconds
+                AI.Update.OperateNPC controlledEntity allEntities gameTime.ElapsedGameTime.Milliseconds
 
         ///
         /// Update Movement & Action State
         ///
 
         for entity in allEntities do
-            let otherEntities = List.filter (fun (item: EntityTypes.Entity) -> item.id <> entity.id) allEntities
+            let otherEntities = List.filter (fun (item: Entity.Types.Entity) -> item.id <> entity.id) allEntities
             // Update entity position
             EntityMovement.MoveEntity entity otherEntities
             // Update possible entity action
@@ -73,13 +73,13 @@ let update
             | Exiting(_, etarget, _) -> etarget
             | Normal -> player.position.x
             | ExitNow nextStage ->
-                if nextStage = StageTypes.Area.Map
+                if nextStage = Map
                 then state.state <- InMap
                 else state.state <- InGame(Areas.init nextStage)
 
                 player.position.x
 
-        AI.MoveAI mapController.player (target, player.position.y) |> ignore
+        AI.Update.MoveAI mapController.player (target, player.position.y) |> ignore
         player.position <- EntityMovement.CalculatePosition player.velocity player.position player.speed
 
     | (Paused, _) ->

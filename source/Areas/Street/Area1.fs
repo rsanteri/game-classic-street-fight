@@ -1,6 +1,6 @@
 module Street.Area1
 
-open StageTypes
+open Stage.Types
 
 let initialMap(): Stage =
     { area = Street1
@@ -10,7 +10,7 @@ let initialMap(): Stage =
               active = true
               action =
                   AddEntity
-                      (Entity.DefaultHumanoid
+                      (Entity.Render.DefaultHumanoid
                           { x = 1024
                             y = 500 }) }
 
@@ -18,7 +18,7 @@ let initialMap(): Stage =
               active = true
               action =
                   AddEntity
-                      (Entity.DefaultHumanoid
+                      (Entity.Render.DefaultHumanoid
                           { x = 0
                             y = 500 }) }
             /// Exit to back
@@ -60,7 +60,7 @@ let initialMapController(): StageController =
           { x = 0
             locked = false }
       player =
-          Entity.DefaultHumanoid
+          Entity.Render.DefaultHumanoid
               { x = -100
                 y = 500 }
       entities = [] }

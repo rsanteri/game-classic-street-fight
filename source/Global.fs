@@ -5,12 +5,12 @@ type Resolution =
       height: int }
 
 type ApplicationState =
-    | InGame of (StageTypes.Stage * StageTypes.StageController)
+    | InGame of (Stage.Types.Stage * Stage.Types.StageController)
     | InMap
     | Loading
 
 type GlobalState =
-    { mutable cursor: UITypes.CursorState
+    { mutable cursor: UI.Types.CursorState
       mutable resolution: Resolution
       mutable console: bool
       mutable state: ApplicationState

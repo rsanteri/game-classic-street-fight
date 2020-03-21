@@ -3,13 +3,13 @@ module Camera
 open Microsoft.Xna.Framework
 
 
-let ToCameraPosition (camera: StageTypes.XCamera) (rectangle: Rectangle) =
+let ToCameraPosition (camera: Stage.Types.XCamera) (rectangle: Rectangle) =
     Rectangle(rectangle.X - camera.x, rectangle.Y, rectangle.Width, rectangle.Height)
 
-let ToParallaxPosition (camera: StageTypes.XCamera) (rectangle: Rectangle) (distance: int) =
+let ToParallaxPosition (camera: Stage.Types.XCamera) (rectangle: Rectangle) (distance: int) =
     Rectangle(rectangle.X - (camera.x * distance / 100), rectangle.Y, rectangle.Width, rectangle.Height)
 
-let MoveCamera (resolution: Global.Resolution) (xcamera: StageTypes.XCamera) (x: int) (mapsize: int) =
+let MoveCamera (resolution: Global.Resolution) (xcamera: Stage.Types.XCamera) (x: int) (mapsize: int) =
     if xcamera.locked then
         ()
     else

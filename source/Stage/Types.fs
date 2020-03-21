@@ -1,6 +1,6 @@
-module StageTypes
+module Stage.Types
 
-open EntityTypes
+open Entity.Types
 
 ///
 /// Camera
@@ -73,4 +73,4 @@ type StageController =
       mutable stageState: StageState
       camera: XCamera
       player: Entity
-      mutable entities: AITypes.EntityController list }
+      mutable entities: AI.Types.EntityController list }

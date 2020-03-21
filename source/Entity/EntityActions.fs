@@ -1,7 +1,7 @@
 module EntityActions
 
-open EntityTypes
-open Entity
+open Entity.Types
+open Entity.Render
 open EntityMovement
 
 ///

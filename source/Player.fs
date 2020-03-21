@@ -1,7 +1,7 @@
 module Player
 
 open Microsoft.Xna.Framework.Input
-open EntityTypes
+open Entity.Types
 open EntityMovement
 
 ///

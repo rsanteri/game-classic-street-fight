@@ -1,10 +1,10 @@
-module Stage
+module Stage.Update
 
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
-open EntityTypes
-open AITypes
-open StageTypes
+open Entity.Types
+open AI.Types
+open Stage.Types
 
 ///
 /// Order entities by position.y so those that are more down are rendered ON the entities more up

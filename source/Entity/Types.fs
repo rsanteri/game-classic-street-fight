@@ -1,4 +1,4 @@
-module EntityTypes
+module Entity.Types
 
 type EntityPosition =
     { mutable x: int

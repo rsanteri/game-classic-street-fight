@@ -6,9 +6,8 @@ open Microsoft.Xna.Framework.Input
 open System
 
 open InputHelper
-open Stage
 open Global
-
+open Stage.Types
 
 type Game1() as self =
     inherit Game()

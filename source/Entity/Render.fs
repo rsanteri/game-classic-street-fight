@@ -1,10 +1,10 @@
-module Entity
+module Entity.Render
 
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 
-open AITypes
-open EntityTypes
+open AI.Types
+open Entity.Types
 
 let mutable entityIndex = 0
 

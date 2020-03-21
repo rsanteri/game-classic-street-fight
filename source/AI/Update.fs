@@ -1,7 +1,7 @@
-module AI
+module AI.Update
 
-open AITypes
-open EntityTypes
+open AI.Types
+open Entity.Types
 open EntityMovement
 open System.Diagnostics
 

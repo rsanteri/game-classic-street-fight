@@ -2,7 +2,7 @@ module GamePlay.Render
 
 open Microsoft.Xna.Framework
 
-open StageTypes
+open Stage.Types
 
 let renderGamePlay
     (state: Global.GlobalState)
@@ -10,22 +10,22 @@ let renderGamePlay
     (mapController: StageController)
     (map: Stage)
     =
-    let entities = Stage.OrderEntities mapController
+    let entities = Stage.Render.OrderEntities mapController
     let cameraPosition = Camera.ToCameraPosition mapController.camera
 
     spriteBatch.Begin()
 
-    Stage.renderStage spriteBatch map mapController.camera
+    Stage.Render.renderStage spriteBatch map mapController.camera
 
     // Entities
     for entity in entities do
-        Entity.DrawEntity spriteBatch entity cameraPosition
+        Entity.Render.DrawEntity spriteBatch entity cameraPosition
 
     // Cursor. Probably not needed in real game
     spriteBatch.Draw(ResourceManager.getSprite "default", Rectangle(state.cursor.x, state.cursor.y, 5, 5), Color.Red)
 
     /// Render possible transition overlay
-    Stage.renderTransitionOverlay spriteBatch map mapController
+    Stage.Render.renderTransitionOverlay spriteBatch map mapController
 
     // Render message about pause or menu state
     match mapController.gameState with

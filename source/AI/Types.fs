@@ -1,6 +1,6 @@
-module AITypes
+module AI.Types
 
-open EntityTypes
+open Entity.Types
 
 type Decision =
     /// No operation
