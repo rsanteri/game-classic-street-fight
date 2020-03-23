@@ -49,7 +49,7 @@ type Game1() as self =
 
         match state.state with
         | Loading -> ()
-        | InMap mapState -> Map.Update.update mapState
+        | InMap mapState -> Map.Update.update mapState state ioactions
         | InGame(map, mapController) -> GamePlay.Update.update gameTime state ioactions map mapController
 
         /// Save io state for next frame
@@ -71,6 +71,12 @@ type Game1() as self =
                 | InGame(map, _) -> state.state <- InGame(Areas.init map.area)
                 | InMap _ -> ()
                 | Loading -> ()
+            | Console.ConsoleCommand.GoTo target ->
+                match target with
+                | "map" -> state.state <- InMap(Map.Update.initMap())
+                | "street1" -> state.state <- InGame(Areas.init Stage.Types.Area.Street1)
+                | "street2" -> state.state <- InGame(Areas.init Stage.Types.Area.Street2)
+                | _ -> Console.AddErrorItem "There is no such stage"
             | Console.ConsoleCommand.ExitApp -> exit 0
 
         consoleCommands <- []

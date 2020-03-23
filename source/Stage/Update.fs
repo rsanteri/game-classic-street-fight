@@ -103,6 +103,5 @@ let ApplyTrigers (map: Stage) (mapcontroller: StageController) =
                     mapcontroller.stageState <- Exiting(0, exitTo, exitArea)
                     trigger.active <- false
 
-
         else
             ()

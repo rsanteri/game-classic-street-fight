@@ -18,6 +18,7 @@ type ConsoleModel =
 
 type ConsoleCommand =
     | SetResolution of int * int
+    | GoTo of string
     | Restart
     | ExitApp
 
@@ -56,6 +57,7 @@ let EnterCommand(): ConsoleCommand list =
 
     let command =
         match Seq.toList (console.text.Split(" ")) with
+        | [ "goto"; target ] -> [ GoTo target ]
         | [ "restart" ] -> [ Restart ]
         | [ "setresolution"; w; h ] -> [ SetResolution(int w, int h) ]
         | [ "exit" ] -> [ ExitApp ]
