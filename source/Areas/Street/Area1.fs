@@ -39,7 +39,7 @@ let initialMap(): Stage =
                             size =
                                 { width = 1361
                                   height = 600 } } ]
-                    distance = 10 }
+                    distance = 5 }
 
                   { sprites =
                         [ { sprite = "citybuildings"
@@ -49,7 +49,7 @@ let initialMap(): Stage =
                             size =
                                 { width = 1361
                                   height = 600 } } ]
-                    distance = 30 } ]
+                    distance = 10 } ]
             street = []
             foreground = [] } }
 
