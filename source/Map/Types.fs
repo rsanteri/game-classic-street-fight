@@ -3,10 +3,12 @@ module Map.Types
 type MapSprite = string
 
 type MapStage =
-    { position: Entity.Types.EntityPosition
+    { id: int
+      position: Entity.Types.EntityPosition
       size: Entity.Types.Size
       sprite: MapSprite
-      available: bool }
+      available: bool
+      area: Stage.Types.Area }
 
 type MapCamera =
     { x: int
@@ -15,4 +17,5 @@ type MapCamera =
 type MapState =
     { sprites: Stage.Types.StaticSprite list
       stages: MapStage list
-      camera: MapCamera }
+      camera: MapCamera
+      activeStage: int }

@@ -74,7 +74,7 @@ let update
             | Normal -> player.position.x
             | ExitNow nextStage ->
                 if nextStage = Map
-                then state.state <- InMap
+                then state.state <- InMap(Map.Update.initMap())
                 else state.state <- InGame(Areas.init nextStage)
 
                 player.position.x

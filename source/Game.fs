@@ -49,7 +49,7 @@ type Game1() as self =
 
         match state.state with
         | Loading -> ()
-        | InMap -> Map.Update.update()
+        | InMap mapState -> Map.Update.update mapState
         | InGame(map, mapController) -> GamePlay.Update.update gameTime state ioactions map mapController
 
         /// Save io state for next frame
@@ -69,7 +69,7 @@ type Game1() as self =
             | Console.ConsoleCommand.Restart ->
                 match state.state with
                 | InGame(map, _) -> state.state <- InGame(Areas.init map.area)
-                | InMap -> ()
+                | InMap _ -> ()
                 | Loading -> ()
             | Console.ConsoleCommand.ExitApp -> exit 0
 
@@ -80,7 +80,7 @@ type Game1() as self =
 
         match state.state with
         | Loading -> ()
-        | InMap -> Map.Render.render state spriteBatch
+        | InMap mapState -> Map.Render.render state spriteBatch mapState
         | InGame(map, mapController) -> GamePlay.Render.renderGamePlay state spriteBatch mapController map
 
         spriteBatch.Begin()
