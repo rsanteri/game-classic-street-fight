@@ -24,3 +24,16 @@ let MoveCamera (resolution: Global.Resolution) (xcamera: Stage.Types.XCamera) (x
                 xcamera.x
 
         xcamera.x <- newValue
+
+///
+/// Left side -100
+/// Middle 0
+/// RightSide 100
+///
+let getRelativePositionToScreen (camera: int) (resolution: Global.Resolution) (position: int) =
+    let halfScreen = resolution.width / 2
+    let middlePoint = camera + halfScreen
+
+    if position < middlePoint
+    then -(int ((float32 (middlePoint - position) / float32 halfScreen) * 100.0f))
+    else int ((float32 (position - middlePoint) / float32 halfScreen) * 100.0f)

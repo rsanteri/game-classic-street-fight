@@ -18,6 +18,7 @@
     <Compile Include="source/Map/Types.fs" />
     
     <Compile Include="source/ResourceManager.fs" />
+    <Compile Include="source/SoundManager.fs" />
     <Compile Include="source/InputHelper.fs" />
     <Compile Include="source/Global.fs" />
 

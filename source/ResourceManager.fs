@@ -10,7 +10,7 @@ type FontBank =
     { mutable fdefault: SpriteFont
       mutable console: SpriteFont }
 
-let fontBank: FontBank =
+let private fontBank: FontBank =
     { fdefault = Unchecked.defaultof<SpriteFont>
       console = Unchecked.defaultof<SpriteFont> }
 
@@ -28,7 +28,7 @@ type SpriteBank =
       mutable citybuildings: Texture2D
       mutable cityview: Texture2D }
 
-let spriteBank: SpriteBank =
+let private spriteBank: SpriteBank =
     { box = Unchecked.defaultof<Texture2D>
       citybg = Unchecked.defaultof<Texture2D>
       citybuildings = Unchecked.defaultof<Texture2D>
@@ -44,32 +44,17 @@ let getSprite (a) =
     | _ -> spriteBank.box
 
 // Sounds
-(*
-type SoundBank =
-    { mutable music: SoundEffect
-      mutable move: SoundEffect
-      mutable goal: SoundEffect
-      mutable error: SoundEffect
-      mutable pressSwitch: SoundEffect }
 
-let soundBank: SoundBank =
-    { music = Unchecked.defaultof<SoundEffect>
-      goal = Unchecked.defaultof<SoundEffect>
-      move = Unchecked.defaultof<SoundEffect>
-      error = Unchecked.defaultof<SoundEffect>
-      pressSwitch = Unchecked.defaultof<SoundEffect> }
+type SoundBank =
+    { mutable footstep: SoundEffect }
+
+let private soundBank: SoundBank = { footstep = Unchecked.defaultof<SoundEffect> }
 
 let getSound a =
     match a with
-    | "music" -> soundBank.music
-    | "move" -> soundBank.move
-    | "goal" -> soundBank.goal
-    | "error" -> soundBank.error
-    | "pressSwitch" -> soundBank.pressSwitch
-    | _ -> soundBank.error
+    | "footstep" -> soundBank.footstep
+    | _ -> soundBank.footstep
 
-let playSound (a: string) = (getSound a).Play() |> ignore
- *)
 // Resource loading
 
 let loadResources (contentManager: ContentManager) =
@@ -80,9 +65,5 @@ let loadResources (contentManager: ContentManager) =
 
     fontBank.fdefault <- contentManager.Load<SpriteFont>("OdibeeSans")
     fontBank.console <- contentManager.Load<SpriteFont>("Inconsolata")
-(*     soundBank.music <- contentManager.Load<SoundEffect>("beat")
-    soundBank.move <- contentManager.Load<SoundEffect>("move_click")
-    soundBank.goal <- contentManager.Load<SoundEffect>("goal_sound")
-    soundBank.error <- contentManager.Load<SoundEffect>("move_error")
-    soundBank.pressSwitch <- contentManager.Load<SoundEffect>("press") *)
 
+    soundBank.footstep <- contentManager.Load<SoundEffect>("footstep1")

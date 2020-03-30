@@ -85,6 +85,8 @@ let UpdateLegMovement entity isLeftLegUp =
         rleg.position.y <- rleg.basePosition.y + if isLeftLegUp then rleg.distance else -rleg.distance
         // Set another leg to go up
         entity.walking <- if isLeftLegUp then RightLegUp else LeftLegUp
+        // Play step sound
+        SoundManager.playSpacialSound "footstep" 1.0f entity.position.x |> ignore
     else
         // Update position
         lleg.position <- CalculatePosition lleg.velocity lleg.position 10

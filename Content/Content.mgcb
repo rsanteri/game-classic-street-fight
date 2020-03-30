@@ -61,6 +61,12 @@
 /processorParam:TextureFormat=Color
 /build:floor.png
 
+#begin footstep1.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:footstep1.ogg
+
 #begin Inconsolata.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

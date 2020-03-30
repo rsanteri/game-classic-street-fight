@@ -19,6 +19,8 @@ let update
     /// Gameplay updates will only happen if we are not in menu or paused.
     match (mapController.gameState, mapController.stageState) with
     | (Playing, StageState.Normal) ->
+        SoundManager.soundHelper.getRelativePosition <-
+            Camera.getRelativePositionToScreen mapController.camera.x state.resolution
         ///
         /// Handle input
         ///
