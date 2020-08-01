@@ -39,7 +39,7 @@ let playSpacialSound (soundName: string) (baseVolume: float32) (location: int) =
             else if panValue < -1.0f then -1.0f
             else panValue
 
-        sound.Play(volume, 0.0f, pan)
+        sound.Play(volume, 0.0f, pan) |> ignore
         sound.Play
             (volume / 2.0f, 0.0f,
              (if pan < 0.0f then 1.0f else -1.0f))
